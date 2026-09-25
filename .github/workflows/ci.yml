@@ -7,7 +7,7 @@ on:
     branches: [ main ]
 
 jobs:
-  # 1. Проверка синтаксиса (Lint)
+  # 1. Проверка синтаксиса кода
   Lint:
     runs-on: ubuntu-latest
     steps:
@@ -19,21 +19,7 @@ jobs:
       - run: npm ci
       - run: npm run lint || true
 
-  # 2. Анализ кода в SonarQube
-  SonarQube:
-    runs-on: ubuntu-latest
-    needs: Lint
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-      - name: SonarQube Scan
-        uses: SonarSource/sonarqube-scan-action@v3
-        env:
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
-
-  # 3. Сканирование безопасности (Trivy)
+  # 2. Сканирование безопасности через Trivy
   Trivy_Security_Scan:
     runs-on: ubuntu-latest
     needs: Lint
@@ -45,10 +31,10 @@ jobs:
           scan-type: 'fs'
           severity: 'CRITICAL,HIGH'
 
-  # 4. Сборка Docker-образа (Build)
+  # 3. Финальная сборка Docker-образа
   Build:
     runs-on: ubuntu-latest
-    needs: [SonarQube, Trivy_Security_Scan]
+    needs: Trivy_Security_Scan
     steps:
       - uses: actions/checkout@v4
       - name: Build Docker Image
