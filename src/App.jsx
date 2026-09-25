@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ShoppingBag, Heart, Trash2, X } from 'lucide-react';
+import { ShoppingBag, Trash2 } from 'lucide-react';
 
 const FLOWERS = [
   { id: 1, name: 'Premium Roses Bouquet', price: 4500, image: 'https://unsplash.com' },
